@@ -106,12 +106,12 @@ public class PDFPrinter {
         Parcel pcl = new Parcel();
         pcl.setCompletionStatus("complete");
         pcl.setLabel("Hiking cap");
-        pcl.setPictureURL("C:/_dev/PdfBox_Examples/logo.png");
+        pcl.setPictureURL("src/main/resources//logo.png");
         pcl.setProvidedQuantity("1");
         pcl.setReference("123456789");
         pcl.setRequiredQuantity("1");
 
-        Cell cell1 = row.createImageCell(15, ImageUtils.readImage(new File("C:/_dev/PdfBox_Examples/product.png")));
+        Cell cell1 = row.createImageCell(15, ImageUtils.readImage(new File("src/main/resources/product.png")));
         cell1 = row.createCell(25, pcl.getReference() + "<br><br>");
         cell1 = row.createCell(35, pcl.getLabel());
         cell1 = row.createCell(5, pcl.getProvidedQuantity());
@@ -126,7 +126,7 @@ public class PDFPrinter {
     private void drawHeader() throws Exception {
 
         //Creating PDImageXObject object
-        PDImageXObject pdImage = PDImageXObject.createFromFile("C:/_dev/PdfBox_Examples/logo.png", getCurrentDocument());
+        PDImageXObject pdImage = PDImageXObject.createFromFile("src/main/resources//logo.png", getCurrentDocument());
 
         //Drawing the image in the PDF document
         getCurrentContentStream().drawImage(pdImage, 150, getPageHeight() - 60, 300, 50);
