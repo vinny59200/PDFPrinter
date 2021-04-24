@@ -16,13 +16,27 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
+ *
+ * __________________  ______     _       _
+ * | ___ \  _  \  ___| | ___ \   (_)     | |
+ * | |_/ / | | | |_    | |_/ / __ _ _ __ | |_ ___ _ __
+ * |  __/| | | |  _|   |  __/ '__| | '_ \| __/ _ \ '__|
+ * | |   | |/ /| |     | |  | |  | | | | | ||  __/ |
+ * \_|   |___/ \_|     \_|  |_|  |_|_| |_|\__\___|_|
+ *
  * @author vvauban
  */
 //TODO handle the page breaks
 @Data
 public class PDFPrinter {
 
-    //fields
+    /*__ _      _     _
+     / _(_)    | |   | |
+    | |_ _  ___| | __| |___
+    |  _| |/ _ \ |/ _` / __|
+    | | | |  __/ | (_| \__ \
+    |_| |_|\___|_|\__,_|___/
+     */
     private float pageHeight = 0;
     private float currentPrintingHeight = 0;
     private PDDocument currentDocument;
@@ -34,6 +48,13 @@ public class PDFPrinter {
     private boolean drawContent = true;
     private float bottomMargin = 70;
 
+
+    /*
+     _ __ _   _ _ __  _ __   ___ _ __
+    | '__| | | | '_ \| '_ \ / _ \ '__|
+    | |  | |_| | | | | | | |  __/ |
+    |_|   \__,_|_| |_|_| |_|\___|_|
+     */
     public static void main(String[] args) {
         try {
             new PDFPrinter().print();
@@ -42,7 +63,14 @@ public class PDFPrinter {
         }
     }
 
-    public void print() throws Exception {
+    /*                        _                        _   _               _
+     _ __  _ __(_)_   ____ _| |_ ___   _ __ ___   ___| |_| |__   ___   __| |___
+    | '_ \| '__| \ \ / / _` | __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+    | |_) | |  | |\ V / (_| | ||  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+    | .__/|_|  |_| \_/ \__,_|\__\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+    |_|
+    */
+    private void print() throws Exception {
         File file = new File("src/main/resources/void.pdf");
         try (
                 //Loading an existing document
@@ -82,14 +110,6 @@ public class PDFPrinter {
         }
     }
 
-
-    /*                             _                        _   _               _
-     _ __  _ __(_)_   ____ _| |_ ___   _ __ ___   ___| |_| |__   ___   __| |___ 
-    | '_ \| '__| \ \ / / _` | __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
-    | |_) | |  | |\ V / (_| | ||  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
-    | .__/|_|  |_| \_/ \__,_|\__\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-    |_|                                                                         
-    */
     private void drawBody() throws Exception {
         BaseTable table = new BaseTable(getCurrentPrintingHeight(), getYStartNewPage(), getBottomMargin(), getTableWidth(), getMargin(), getCurrentDocument(), getCurrentPage(), true, isDrawContent());
 
@@ -140,7 +160,6 @@ public class PDFPrinter {
     | | '_ \| '_ \ / _ \ '__|  / __| |/ _` / __/ __|/ _ \/ __|
     | | | | | | | |  __/ |    | (__| | (_| \__ \__ \  __/\__ \
     |_|_| |_|_| |_|\___|_|     \___|_|\__,_|___/___/\___||___/
-                                                          
     */
     @Data
     class Parcel {
