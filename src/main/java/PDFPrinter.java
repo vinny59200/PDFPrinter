@@ -4,19 +4,12 @@ import be.quodlibet.boxable.Cell;
 import be.quodlibet.boxable.Row;
 import be.quodlibet.boxable.utils.ImageUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import lombok.Data;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -49,20 +42,15 @@ public class PDFPrinter {
         }
     }
 
-    /**
-     * @throws Exception
-     */
     public void print() throws Exception {
-        File file = provideFile();
+        File file = new File("src/main/resources/void.pdf");
         try (
                 //Loading an existing document
-                //TODO use that: https://stackoverflow.com/questions/42281893/pdfbox-document-to-inputstream
                 PDDocument doc = PDDocument.load(file)) {
             //Retrieving the page
             PDPage page = doc.getPage(0);
-            try (
-                    //creating the PDPageContentStream object
-                    PDPageContentStream stream = new PDPageContentStream(doc, page)) {
+            try (PDPageContentStream stream = new PDPageContentStream(doc, page)) {
+
                 // starting y position is whole page height subtracted by top and bottom margin
                 setYStartNewPage(page.getMediaBox().getHeight() - (2 * getMargin()));
                 setDrawContent(true);
@@ -83,14 +71,19 @@ public class PDFPrinter {
                 drawBody();
 
             }
-            doc.save(file.getAbsolutePath());
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            doc.save(out);
             doc.close();
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            String base64 = Base64.encodeBase64String(in.readAllBytes());
+            System.out.println(base64);
+
         }
     }
 
 
-    /*
-                             _                        _   _               _     
+    /*                             _                        _   _               _
      _ __  _ __(_)_   ____ _| |_ ___   _ __ ___   ___| |_| |__   ___   __| |___ 
     | '_ \| '__| \ \ / / _` | __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
     | |_) | |  | |\ V / (_| | ||  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
@@ -135,31 +128,10 @@ public class PDFPrinter {
         setTableWidth(100);
         BaseTable table = new BaseTable(getPageHeight() - 100, getYStartNewPage(), getBottomMargin(), getTableWidth(), getMargin(), getCurrentDocument(), getCurrentPage(), false, isDrawContent());
         Row<PDPage> headerRow = table.createRow(15f);
-        Cell<PDPage> cell = headerRow.createCell(50, "HEADER");
+        Cell<PDPage> cell = headerRow.createCell(50, "HEADER VV");
         cell = headerRow.createCell(50, "SAMPLE");
         table.addHeaderRow(headerRow);
         table.draw();
-    }
-
-    private File provideFile() throws Exception {
-        Random ran = new Random();
-        int rndId = ran.nextInt(500000);
-        //set the date yyyymmdd-HHMMsss as prefix of the name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd(HH-mm,ss)").format(new Timestamp(System.currentTimeMillis()));
-        String path = "C:/_dev/PdfBox_Examples/" + timeStamp + "-" + rndId + ".pdf";
-        //TODO define the file name and path
-        // Create a new blank page and add it to the document
-        try ( // Create a new empty document
-              PDDocument document = new PDDocument()) {
-            // Create a new blank page and add it to the document
-            PDPage blankPage = new PDPage();
-            document.addPage(blankPage);
-            // Save the newly created document
-            document.save(path);
-            // finally make sure that the document is properly closed.
-            document.close();
-        }
-        return new File(path);
     }
 
     /*
@@ -178,17 +150,6 @@ public class PDFPrinter {
         String providedQuantity;
         String requiredQuantity;
         String completionStatus;
-    }
-
-    @Data
-    class Header {
-        String customerOrderNumber;
-        String orderNumber;
-        String departureDate;
-        String expeditorAddress;
-        String deliveryAddress;
-        String sequelNumber;
-        String parcelNumber;
     }
 
 }
