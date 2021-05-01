@@ -16,7 +16,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
- *
  * __________________  ______     _       _
  * | ___ \  _  \  ___| | ___ \   (_)     | |
  * | |_/ / | | | |_    | |_/ / __ _ _ __ | |_ ___ _ __
@@ -71,43 +70,43 @@ public class PDFPrinter {
     |_|
     */
     private void print() throws Exception {
-        File file = new File("src/main/resources/void.pdf");
-        try (
-                //Loading an existing document
-                PDDocument doc = PDDocument.load(file)) {
-            //Retrieving the page
-            PDPage page = doc.getPage(0);
-            try (PDPageContentStream stream = new PDPageContentStream(doc, page)) {
+        PDDocument doc = new PDDocument();
+        PDPage blankPage = new PDPage();
+        //Adding the blank page to the document
+        doc.addPage(blankPage);
 
-                // starting y position is whole page height subtracted by top and bottom margin
-                setYStartNewPage(page.getMediaBox().getHeight() - (2 * getMargin()));
-                setDrawContent(true);
-                setBottomMargin(70);
-                setPageHeight(page.getMediaBox().getHeight());
-                setCurrentPrintingHeight(getPageHeight() - 200);
-                setCurrentDocument(doc);
-                setCurrentPage(page);
-                setCurrentContentStream(stream);
+        PDPage page = doc.getPage(0);
+        try (PDPageContentStream stream = new PDPageContentStream(doc, page)) {
 
-                //Print header
-                drawHeader();
+            // starting y position is whole page height subtracted by top and bottom margin
+            setYStartNewPage(page.getMediaBox().getHeight() - (2 * getMargin()));
+            setDrawContent(true);
+            setBottomMargin(70);
+            setPageHeight(page.getMediaBox().getHeight());
+            setCurrentPrintingHeight(getPageHeight() - 200);
+            setCurrentDocument(doc);
+            setCurrentPage(page);
+            setCurrentContentStream(stream);
 
-                // we want table across whole page width (subtracted by left and right margin ofcourse)
-                setTableWidth(page.getMediaBox().getWidth() - (2 * getMargin()));
+            //Print header
+            drawHeader();
 
-                //Print body
-                drawBody();
+            // we want table across whole page width (subtracted by left and right margin ofcourse)
+            setTableWidth(page.getMediaBox().getWidth() - (2 * getMargin()));
 
-            }
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            doc.save(out);
-            doc.close();
-            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            String base64 = Base64.encodeBase64String(in.readAllBytes());
-            System.out.println(base64);
+            //Print body
+            drawBody();
 
         }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        doc.save(out);
+        doc.close();
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        String base64 = Base64.encodeBase64String(in.readAllBytes());
+        System.out.println(base64);
+
+
     }
 
     private void drawBody() throws Exception {
